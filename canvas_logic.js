@@ -52,6 +52,8 @@ function resize_canvas() {
     // Clear and redraw the canvas with the new size
     ctx.fillStyle = "crimson";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    initialize_player();
 }
 
 function start_game() {
