@@ -2,7 +2,7 @@ let canvas;
 let ctx;
 
 // Fixed aspect ratio (width:height)
-const ASPECT_RATIO = 4 / 3;
+const ASPECT_RATIO = 18 / 14;
 
 function initialize_canvas() {
     // Create the canvas
@@ -26,13 +26,11 @@ function resize_canvas() {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
-    // Calculate the width and height based on aspect ratio
+    // Calculate the width and height based on aspect ratio 4:3
     let newWidth = windowWidth;
     let newHeight = windowWidth / ASPECT_RATIO;
-    let modifier = 0; 
-    let modifier2 = 0;
 
-    // If the calculated height is too large for the window, adjust based on height
+    // If the calculated height exceeds the window height, adjust based on height
     if (newHeight > windowHeight) {
         newHeight = windowHeight;
         newWidth = windowHeight * ASPECT_RATIO;
@@ -42,7 +40,7 @@ function resize_canvas() {
     canvas.width = newWidth;
     canvas.height = newHeight;
 
-    // Optional: Add some styling to center the canvas (optional)
+    // Optional: Add some styling to center the canvas
     canvas.style.display = "block";
     canvas.style.margin = "auto";
     canvas.style.position = "absolute";
@@ -55,31 +53,31 @@ function resize_canvas() {
     ctx.fillStyle = "#FA0F1B";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    for (i = 0; i <19; i++){
-        modifier = modifier + 0.05; 
-         // Gitterlayout 
+    // Determine the grid size based on the shortest side of the canvas
+    const gridSize = Math.min(canvas.width, canvas.height) / 14;
+
+    // Draw vertical grid lines
+    for (let i = 0; i <= 18; i++) {
         ctx.beginPath();
-        ctx.moveTo(canvas.width*modifier, canvas.height); 
-        ctx.lineTo(canvas.width*modifier, 0);
+        ctx.moveTo(i * gridSize, 0);
+        ctx.lineTo(i * gridSize, canvas.height);
         ctx.lineWidth = 5; 
         ctx.strokeStyle = "#FB3741"; 
         ctx.stroke(); 
     }     
 
-    for (i = 0; i <15; i++){
-        modifier2 = modifier2 + 0.072; 
-         // Gitterlayout 
+    // Draw horizontal grid lines
+    for (let i = 0; i <= 14; i++) {
         ctx.beginPath();
-        ctx.moveTo(canvas.width, canvas.height*modifier2); 
-        ctx.lineTo(0, canvas.height*modifier2);
+        ctx.moveTo(0, i * gridSize);
+        ctx.lineTo(canvas.width, i * gridSize);
         ctx.lineWidth = 5; 
         ctx.strokeStyle = "#FB3741"; 
         ctx.stroke(); 
     }    
-    initialize_player();
+
+    initialize_player(canvas.height, canvas.width);
 }
-
-
 function start_game() {
     initialize_canvas();
     initialize_player();
