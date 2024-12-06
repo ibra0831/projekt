@@ -29,6 +29,8 @@ function resize_canvas() {
     // Calculate the width and height based on aspect ratio
     let newWidth = windowWidth;
     let newHeight = windowWidth / ASPECT_RATIO;
+    let modifier = 0; 
+    let modifier2 = 0;
 
     // If the calculated height is too large for the window, adjust based on height
     if (newHeight > windowHeight) {
@@ -50,14 +52,39 @@ function resize_canvas() {
     canvas.style.right = "0";
 
     // Clear and redraw the canvas with the new size
-    ctx.fillStyle = "crimson";
+    ctx.fillStyle = "#FA0F1B";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    for (i = 0; i <19; i++){
+        modifier = modifier + 0.05; 
+         // Gitterlayout 
+        ctx.beginPath();
+        ctx.moveTo(canvas.width*modifier, canvas.height); 
+        ctx.lineTo(canvas.width*modifier, 0);
+        ctx.lineWidth = 5; 
+        ctx.strokeStyle = "#FB3741"; 
+        ctx.stroke(); 
+    }     
 
+    for (i = 0; i <15; i++){
+        modifier2 = modifier2 + 0.072; 
+         // Gitterlayout 
+        ctx.beginPath();
+        ctx.moveTo(canvas.width, canvas.height*modifier2); 
+        ctx.lineTo(0, canvas.height*modifier2);
+        ctx.lineWidth = 5; 
+        ctx.strokeStyle = "#FB3741"; 
+        ctx.stroke(); 
+    }    
     initialize_player();
 }
+
 
 function start_game() {
     initialize_canvas();
     initialize_player();
-    document.getElementById("button_start_game").remove();
+    document.getElementById("button_start_game").remove(); 
 }
+
+
+
