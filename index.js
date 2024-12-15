@@ -1,8 +1,8 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-const aspectRatio = 18 / 14; // Maintain this aspect ratio globally
+const aspectRatio = 18 / 14; // Størrelsen og billedformat af banen
 
-// Movement variables
+// Variabler til input-tjek
 const keys = {
     w: { pressed: false },
     a: { pressed: false },
@@ -11,7 +11,7 @@ const keys = {
 };
 let lastKey = '';
 
-// Boundary class
+// Boundary class (vægge)
 class Boundary {
     constructor({ position }) {
         this.position = position;
@@ -25,7 +25,7 @@ class Boundary {
     }
 }
 
-// Player class
+// Spillerkarakter class
 class Player {
     constructor({ position, velocity }) {
         this.position = position;
@@ -65,10 +65,9 @@ class Player {
         this.position.y += this.velocity.y;
     }
 }
-
-// Resize and update functions
 const boundaries = [];
 
+// Resizing til canvas baseret på browser vinduets størrelse
 function resizeCanvas() {
     if (window.innerWidth / window.innerHeight > aspectRatio) {
         canvas.height = window.innerHeight;
@@ -78,31 +77,30 @@ function resizeCanvas() {
         canvas.height = window.innerWidth / aspectRatio;
     }
 
-    // Update player size and position
+    // Opdaterer spillerens størrelse
     player.resize();
 
-    // Redraw the canvas content after resizing
+    // Genindlæser canvas
     updateCanvas();
 }
 
 function updateCanvas() {
     boundaries.length = 0;
 
-    // Clear and redraw background
     ctx.fillStyle = '#C42348';
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Map
+    // Banen
     const map = [
         ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
         ['-', ' ', ' ', ' ', ' ', ' ', ' ', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
-        ['-', ' ', '-', ' ', '-', ' ', ' ', '-', ' ', ' ', ' ', '-', '-', ' ', ' ', '-', ' ', '-'],
+        ['-', ' ', '-', ' ', '-', ' ', ' ', '-', ' ', ' ', ' ', '-', '-', '-', ' ', '-', ' ', '-'],
         ['-', ' ', '-', ' ', '-', ' ', '-', '-', ' ', '-', '-', '-', ' ', '-', ' ', '-', ' ', '-'],
         ['-', ' ', '-', ' ', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-', ' ', '-', ' ', '-'],
         ['-', ' ', '-', ' ', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', ' ', '-', ' ', '-'],
-        ['-', ' ', '-', ' ', ' ', ' ', ' ', '-', '-', '-', ' ', ' ', ' ', ' ', ' ', '-', ' ', '-'],
-        ['-', ' ', '-', '-', ' ', '-', ' ', '-', ' ', '-', ' ', '-', '-', '-', '-', '-', ' ', '-'],
+        [' ', ' ', '-', ' ', ' ', ' ', ' ', '-', ' ', '-', ' ', ' ', ' ', ' ', ' ', '-', ' ', ' '],
+        [' ', ' ', '-', '-', ' ', '-', ' ', '-', ' ', '-', ' ', '-', '-', '-', '-', '-', ' ', ' '],
         ['-', ' ', ' ', ' ', ' ', '-', ' ', '-', ' ', '-', ' ', '-', ' ', ' ', ' ', ' ', ' ', '-'],
         ['-', '-', '-', '-', ' ', '-', '-', '-', ' ', '-', '-', '-', ' ', '-', '-', '-', '-', '-'],
         ['-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
@@ -111,7 +109,6 @@ function updateCanvas() {
         ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
     ]
     
-
     map.forEach((row, i) => {
         row.forEach((symbol, j) => {
             if (symbol === '-') {
@@ -128,7 +125,7 @@ function updateCanvas() {
     });
 }
 
-// Create the player instance
+// Skaber spiller karakteren
 const player = new Player({
     position: {
         x: (canvas.width / 18) + ((canvas.width / 18) / 2),
@@ -137,11 +134,11 @@ const player = new Player({
     velocity: { x: 0, y: 0 },
 });
 
-// Add resize listener and initialize canvas
+// Tilføjer event listener der lytter til resize af browser-vinduet 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// Animation loop
+// Her foregår alt spil-mekanikken
 function animate() {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -149,11 +146,11 @@ function animate() {
     boundaries.forEach((boundary) => {
         boundary.draw();
 
-        // Collision
-        if (player.position.y + player.velocity.y <= boundary.position.y + boundary.height
+        // Collision håndtering
+        if (player.position.y + player.velocity.y + (-player.radius) <= boundary.position.y + boundary.height
             && player.position.x + player.velocity.x + (player.radius) >= boundary.position.x
             && player.position.y + player.velocity.y + (player.radius) >= boundary.position.y 
-            && player.position.x + player.velocity.x <= boundary.position.x + boundary.width
+            && player.position.x + player.velocity.x + (-player.radius) <= boundary.position.x + boundary.width
         ) {
             player.velocity.x = 0;
             player.velocity.y = 0;
@@ -172,10 +169,17 @@ function animate() {
     } else if (keys.d.pressed && lastKey === 'd') {
         player.velocity.x = canvas.width * 0.01;
     }
+    
+    if (player.position.x < 0) {
+        player.position.x = canvas.width;
+    } 
+    if (player.position.x > canvas.width) {
+        player.position.x = 0;
+    }
 }
 animate();
 
-// Key event listeners
+// Input-tjek listeners
 addEventListener('keydown', ({ key }) => {
     switch (key) {
         case 'w':
