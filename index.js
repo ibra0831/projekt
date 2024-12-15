@@ -11,6 +11,9 @@ const keys = {
 };
 let lastKey = '';
 
+// Map generation
+const selectedStarterMap = starterMaps[Math.floor(Math.random() * starterMaps.length)];
+
 // Boundary class (vægge)
 class Boundary {
     constructor({ position }) {
@@ -67,6 +70,9 @@ class Player {
 }
 const boundaries = [];
 
+// Projektil klasse
+
+
 // Resizing til canvas baseret på browser vinduets størrelse
 function resizeCanvas() {
     if (window.innerWidth / window.innerHeight > aspectRatio) {
@@ -92,22 +98,7 @@ function updateCanvas() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Banen
-    const map = [
-        ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-        ['-', ' ', ' ', ' ', ' ', ' ', ' ', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
-        ['-', ' ', '-', ' ', '-', ' ', ' ', '-', ' ', ' ', ' ', '-', '-', '-', ' ', '-', ' ', '-'],
-        ['-', ' ', '-', ' ', '-', ' ', '-', '-', ' ', '-', '-', '-', ' ', '-', ' ', '-', ' ', '-'],
-        ['-', ' ', '-', ' ', '-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-', ' ', '-', ' ', '-'],
-        ['-', ' ', '-', ' ', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', ' ', '-', ' ', '-'],
-        [' ', ' ', '-', ' ', ' ', ' ', ' ', '-', ' ', '-', ' ', ' ', ' ', ' ', ' ', '-', ' ', ' '],
-        [' ', ' ', '-', '-', ' ', '-', ' ', '-', ' ', '-', ' ', '-', '-', '-', '-', '-', ' ', ' '],
-        ['-', ' ', ' ', ' ', ' ', '-', ' ', '-', ' ', '-', ' ', '-', ' ', ' ', ' ', ' ', ' ', '-'],
-        ['-', '-', '-', '-', ' ', '-', '-', '-', ' ', '-', '-', '-', ' ', '-', '-', '-', '-', '-'],
-        ['-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
-        ['-', ' ', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', ' ', '-'],
-        ['-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
-        ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
-    ]
+    const map = selectedStarterMap;
     
     map.forEach((row, i) => {
         row.forEach((symbol, j) => {
@@ -169,7 +160,7 @@ function animate() {
     } else if (keys.d.pressed && lastKey === 'd') {
         player.velocity.x = canvas.width * 0.01;
     }
-    
+
     if (player.position.x < 0) {
         player.position.x = canvas.width;
     } 
