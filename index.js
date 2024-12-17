@@ -34,10 +34,10 @@ class Player {
         this.position = position;
         this.velocity = velocity;
         this.size = (canvas.width / 14) * 0.75;
-        this.radius = (canvas.width / 14) * 0.75;
+        this.radius = (canvas.width / 14) * 0.35;
 
-        /* this.image = new Image();
-        this.image.src = 'Bacteria.png'; */
+        this.image = new Image();
+        this.image.src = 'Bacteria.png';
     }
 
     resize() {
@@ -48,20 +48,32 @@ class Player {
 
     draw() {
         this.size = (canvas.width / 14) * 0.75;
-        this.radius = (canvas.width / 14) * 0.35;
+        this.radius = (canvas.width / 14) * 0.25;
         ctx.beginPath();
         ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = '#069E2D';
         ctx.fill();
         ctx.closePath();
         
-        /*if (this.image.complete) {
-            ctx.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
-        } else {
-            this.image.onload = () => {
-                ctx.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
-            };
-        }*/
+    if (this.image.complete) {
+        ctx.drawImage(
+            this.image, 
+            this.position.x - this.size / 2,
+            this.position.y - this.size / 2,
+            this.size, 
+            this.size
+        );
+    } else {
+        this.image.onload = () => {
+            ctx.drawImage(
+                this.image, 
+                this.position.x - this.size / 2, 
+                this.position.y - this.size / 2, 
+                this.size, 
+                this.size
+            );
+        };
+    }
     }
 
     update() {
@@ -86,8 +98,6 @@ class Projectile {
 
     resize() {
         this.size = (canvas.width / 14) * 0.75;
-        this.position.x = (canvas.width / 18) + ((canvas.width / 18) / 2);
-        this.position.y = (canvas.height / 14) + ((canvas.height / 14) / 2);
     }
 
     draw() {
@@ -111,19 +121,46 @@ class BloodCell {
     constructor({ position, velocity, color = 'white' }) {
       this.position = position
       this.velocity = velocity
-      this.radius = (canvas.width / 14) * 0.75;
+      this.size = (canvas.width / 14) * 0.75; // Player size
+      this.radius = (canvas.width / 14) * 0.35; // Player radius      
       this.color = color
       this.prevCollisions = [] 
       this.speed = 2 
       this.scared = false 
+
+      this.image = new Image();
+      this.image.src = 'WhiteBlood.png';
     }
 
-draw() {
-    ctx.beginPath()
-    ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2) 
-    ctx.fillStyle = this.scared ? 'blue' : this.color
-    ctx.fill() 
-    ctx.closePath()
+    draw() {
+        ctx.save();
+        
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+    
+        if (this.image.complete) {
+            ctx.drawImage(
+                this.image,
+                this.position.x - this.radius,
+                this.position.y - this.radius, 
+                this.radius * 2,               
+                this.radius * 2              
+            );
+        } else {
+            this.image.onload = () => {
+                ctx.drawImage(
+                    this.image,
+                    this.position.x - this.radius,
+                    this.position.y - this.radius,
+                    this.radius * 2,
+                    this.radius * 2
+                );
+            };
+        }
+    
+        ctx.restore(); // Restore the canvas state to remove the clipping
     }
 
 update() {
@@ -150,6 +187,8 @@ function resizeCanvas() {
     updateCanvas();
 }
 
+const BWCs = [];
+
 function updateCanvas() {
     boundaries.length = 0;
 
@@ -171,6 +210,20 @@ function updateCanvas() {
                         },
                     })
                 );
+            } else if (symbol === 'B') {
+                BWCs.push(
+                    new BloodCell({
+                        position: {
+                            x: (canvas.width / 18) * j + (canvas.width / 18) / 2,
+                            y: (canvas.height / 14) * i + (canvas.height / 14) / 2,
+                        }, 
+                        velocity: {
+                            x: BloodCell.speed,
+                            y: 0 
+                        },
+                        color: 'white'
+                    })
+                );
             }
         });
     });
@@ -185,26 +238,11 @@ const player = new Player({
     velocity: { x: 0, y: 0 },
 });
 
-const BWCs = [
-    new BloodCell({
-        position: {
-            x: (canvas.width / 18) + ((canvas.width / 18) / 2),
-            y: (canvas.height / 14) + ((canvas.height / 14) / 2),
-        }, 
-        velocity: {
-            x: BloodCell.speed,
-            y: 0 
-        },
-        color: 'white'
-    })
-]
-
 // Tilføjer event listener der lytter til resize af browser-vinduet 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 function circleCollidesWithRectangle({ circle, rectangle }) {
-    const padding = Boundary.width / 2 - circle.radius - 1
     return ( 
         circle.position.y - circle.radius + circle.velocity.y <= 
         rectangle.position.y + rectangle.height && 
@@ -236,8 +274,118 @@ function animate() {
               }
     });
 
-    BWCs.forEach((BWCs) => {
-        BWCs.update();
+    BWCs.forEach((BWC) => {
+        BWC.update();
+        const collisions = [] 
+
+        boundaries.forEach(boundary => {
+                if ( 
+                !collisions.includes('right') &&
+                circleCollidesWithRectangle({
+                circle: {...BWC, 
+                    velocity: {
+                    x: BWC.speed , 
+                    y: 0 
+                }},
+                rectangle: boundary
+            })
+            ) {
+                collisions.push('right') 
+            }
+
+            if ( 
+                !collisions.includes('left') &&
+                circleCollidesWithRectangle({
+                circle: {...BWC, 
+                    velocity: {
+                    x: -BWC.speed , 
+                    y: 0 
+                }},
+                rectangle: boundary
+            })
+            ) {
+                collisions.push('left') 
+            }
+
+            if ( 
+                !collisions.includes('up') &&
+                circleCollidesWithRectangle({
+                circle: {...BWC, 
+                    velocity: {
+                    x: 0, 
+                    y: -BWC.speed 
+                }},
+                rectangle: boundary
+            })
+            ) {
+                collisions.push('up') 
+            }
+
+            if ( 
+                !collisions.includes('down') && 
+                circleCollidesWithRectangle({
+                circle: {...BWC, 
+                    velocity: {
+                    x: 0, 
+                    y: BWC.speed 
+                }},
+                rectangle: boundary
+            })
+            ) {
+                collisions.push('down') 
+            }
+        })
+        if (collisions.length > BWC.prevCollisions.length)
+            BWC.prevCollisions = collisions
+        
+        if (JSON.stringify(collisions) !== JSON.stringify(BWC.prevCollisions)) { 
+            console.log(collisions) 
+            console.log(BWC.prevCollisions)
+            if (BWC.velocity.x > 0) BWC.prevCollisions.
+             push('right') 
+            else if (BWC.velocity.x < 0) BWC.prevCollisions.
+             push('left') 
+            else if (BWC.velocity.y < 0) BWC.prevCollisions.
+             push('up') 
+            else if (BWC.velocity.y > 0) BWC.prevCollisions.
+             push('down')
+
+            const pathways = BWC.prevCollisions.filter(collision => {
+                return !collisions.includes(collision) 
+            })
+            console.log({ pathways })
+
+            const direction = pathways[Math.floor(Math.random() * pathways.length)] 
+            
+            console.log({ direction })
+
+            switch (direction) {
+                case 'down':
+                    BWC.velocity.y = BWC.speed  
+                    BWC.velocity.x = 0
+                    break 
+                case 'up':
+                    BWC.velocity.y = -BWC.speed  
+                    BWC.velocity.x = 0
+                    break 
+                case 'right':
+                    BWC.velocity.y = 0 
+                    BWC.velocity.x = BWC.speed 
+                    break 
+                case 'left':
+                    BWC.velocity.y = 0 
+                    BWC.velocity.x = -BWC.speed 
+                    break 
+            }
+
+            BWC.prevCollisions = [] 
+        }
+        if (BWC.position.x < 0) {
+            BWC.position.x = canvas.width;
+        } 
+        if (BWC.position.x > canvas.width) {
+            BWC.position.x = 0;
+        }
     });
 
     player.update();
