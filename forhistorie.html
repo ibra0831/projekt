@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            height: 100vh;
+            background-color: #EC5766; 
+            color: #39ff14; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5%;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .story-container {
+            width: 40%;
+        }
+        .story {
+            font-size: 1.2rem;
+            white-space: pre-wrap; 
+            overflow: hidden; 
+            border-right: 2px solid #39ff14; 
+            text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;
+           
+        }
+        
+        
+        .controls-container {
+            text-align: center;
+            width: 30%;
+        }
+        .instructions {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;
+        }
+        .keys {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 10px;
+            justify-content: center;
+        }
+        .key {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+            border: 2px solid #39ff14;
+            color: #39ff14;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 5px;
+            text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
+            box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+            user-select: none;
+        }
+        .arrow-button {
+            position: absolute;
+            bottom: 20px; /* Placering nede */
+            right: 20px; /* Placering i højre hjørne */
+            width: 60px;
+            height: 60px;
+            background-color: transparent;
+            border: 2px solid #39ff14; /* Neon kant */
+            border-radius: 50%; /* Rund knap */
+            color: #39ff14;
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none; /* Fjern understregning */
+            box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+            text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .arrow-button:hover {
+            transform: scale(1.2); /* Forstør knappen lidt ved hover */
+            box-shadow: 0 0 15px #39ff14, 0 0 30px #39ff14;
+        }
+        
+    </style>
+</head>
+<body>
+   
+    <div class="story-container">
+        <div id="story" class="story"></div>
+    </div>
+
+    <div class="controls-container">
+        <div class="instructions">
+            Brug <strong>W</strong>, <strong>A</strong>, <strong>S</strong>, og <strong>D</strong> til at styre din karakter:
+        </div>
+        <div class="keys">
+            <div class="key"></div>
+            <div class="key">W</div>
+            <div class="key"></div>
+            <div class="key">A</div>
+            <div class="key">S</div>
+            <div class="key">D</div>
+        </div>
+    </div>
+
+
+    <a href="index.html" class="arrow-button">
+        &#10140; 
+    </a>
+
+    <script>
+        let storyText = `
+Bakterien Bob er den sidste af sin slags - en lille, lysende grøn bakterie med en uventet evne. Efter en mystisk kemisk eksplosion i kroppen har Bob fået kraften til at overleve og tilpasse sig på de mest umulige måder.
+
+Men kroppens forsvar har set sig vred på ham. Ledet af den frygtindgydende General Immuno har de hvide blodlegemer sat en ubarmhjertig jagt ind. Bob er fanget i kroppens blodårer - et konstant flow af farer, hvor de hvide blodlegemer angriber fra alle sider.
+
+For at overleve må Bob undvige, navigere og overleve i de snævre blodkar, mens truslen konstant vokser. Hans mission? Blive ved med at flygte, kæmpe mod strømmen og finde et sted, hvor han endelig kan være i fred.
+
+Undvig. Overlev. Bliv fri.`;
+
+        let storyElement = document.getElementById("story");
+        let i = 0;
+
+        //funktion der laver typewriter effekten, og skriver et tegn ad gangen
+        function typeWriter() {
+            if (i < storyText.length) {
+                storyElement.innerHTML += storyText.charAt(i); 
+                i++;
+                setTimeout(typeWriter, 10); 
+            }
+        }
+        window.onload = typeWriter; 
+    </script>
+
+</body>
+</html>
