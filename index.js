@@ -71,7 +71,37 @@ class Player {
 const boundaries = [];
 
 // Projektil klasse
+class Projectile {
+    constructor({ position, velocity }) {
+        this.position = position;
+        this.velocity = velocity;
+        this.size = (canvas.width / 14) * 0.1;
+        this.radius = (canvas.width / 14) * 0.1;
 
+        /* this.image = new Image();
+        this.image.src = 'Bacteria.png'; */
+    }
+
+    resize() {
+        this.size = (canvas.width / 14) * 0.75;
+        this.position.x = (canvas.width / 18) + ((canvas.width / 18) / 2);
+        this.position.y = (canvas.height / 14) + ((canvas.height / 14) / 2);
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#069E2D';
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    update() {
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+}
 
 // Resizing til canvas baseret på browser vinduets størrelse
 function resizeCanvas() {
