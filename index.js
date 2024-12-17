@@ -11,6 +11,8 @@ const keys = {
 };
 let lastKey = '';
 
+const projectiles = []; // Store the fired projectiles
+
 // Map generation
 const selectedStarterMap = starterMaps[Math.floor(Math.random() * starterMaps.length)];
 
@@ -127,6 +129,8 @@ class BloodCell {
       this.prevCollisions = [] 
       this.speed = 2 
       this.scared = false 
+
+      this.hits = 0;
 
       this.image = new Image();
       this.image.src = 'WhiteBlood.png';
@@ -284,7 +288,7 @@ function animate() {
                 circleCollidesWithRectangle({
                 circle: {...BWC, 
                     velocity: {
-                    x: BWC.speed , 
+                    x: BWC.speed, 
                     y: 0 
                 }},
                 rectangle: boundary
@@ -390,7 +394,6 @@ function animate() {
 
     player.update();
 
-
     if (keys.w.pressed && lastKey === 'w') {
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i] 
@@ -475,10 +478,41 @@ function animate() {
     if (player.position.x > canvas.width) {
         player.position.x = 0;
     }
+
+    projectiles.forEach((projectile, index) => {
+        projectile.update();
+        
+        if (
+            projectile.position.x < 0 ||
+            projectile.position.x > canvas.width ||
+            projectile.position.y < 0 ||
+            projectile.position.y > canvas.height
+        ) {
+            projectiles.splice(index, 1);
+        }
+    });
 }
 animate();
 
-// Input-tjek listeners
+function shootProjectile(direction) {
+    const velocity = { x: 0, y: 0 };
+
+    if (direction === 'up') {
+        velocity.y = -5;
+    } else if (direction === 'down') {
+        velocity.y = 5;
+    } else if (direction === 'left') {
+        velocity.x = -5;
+    } else if (direction === 'right') {
+        velocity.x = 5;
+    }
+
+    projectiles.push(new Projectile({
+        position: { x: player.position.x, y: player.position.y },
+        velocity: velocity,
+    }));
+}
+
 addEventListener('keydown', ({ key }) => {
     switch (key) {
         case 'w':
@@ -496,6 +530,18 @@ addEventListener('keydown', ({ key }) => {
         case 'd':
             keys.d.pressed = true;
             lastKey = 'd';
+            break;
+        case 'ArrowUp':
+            shootProjectile('up');
+            break;
+        case 'ArrowDown':
+            shootProjectile('down');
+            break;
+        case 'ArrowLeft':
+            shootProjectile('left');
+            break;
+        case 'ArrowRight':
+            shootProjectile('right');
             break;
     }
 });
