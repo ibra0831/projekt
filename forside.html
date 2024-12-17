@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('forside.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+    
+        .container {
+            text-align: center;
+        }
+    
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+    
+        .start-container {
+            text-align: center;
+        }
+    
+        .start-container img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+    
+        .start-button {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            color: rgb(255, 0, 0); 
+            background-color: transparent; 
+            border: 2px solid rgb(0, 255, 17);  
+            border-radius: 10px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 0 5px rgb(0, 255, 17), 0 0 10px rgb(0, 255, 17), 0 0 20px rgb(0, 255, 17), 0 0 40px rgb(0, 255, 17);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+    
+        .start-button:hover {
+            transform: scale(1.5); 
+            box-shadow: 0 0 10px rgb(0, 255, 17), 0 0 20px rgb(0, 255, 17), 0 0 30px rgb(0, 255, 17), 0 0 50px rgb(0, 255, 17);
+        }   
+    
+        .start-button:active {
+            transform: scale(1);
+            box-shadow: 0 0 5px rgb(0, 255, 17), 0 0 10px rgb(0, 255, 17), 0 0 20px rgb(0, 255, 17);
+        }
+    
+    
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BAKTERIENS OPRØR</h1>
+        <div class="start-container">
+            <button class="start-button" onclick="window.location.href='index.html';">Start spillet</button>
+        </div>
+    </div>
+</body>
+</html>
