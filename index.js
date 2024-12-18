@@ -114,23 +114,30 @@ class Projectile {
     }
 }
 
-// Fjende class
 class BloodCell { 
-    static speed = 2 
+    static speed = 2;
     constructor({ position, velocity, color = 'white' }) {
-      this.position = position
-      this.velocity = velocity
-      this.size = (canvas.width / 14) * 0.75;
-      this.radius = (canvas.width / 14) * 0.35;   
-      this.color = color
-      this.prevCollisions = [] 
-      this.speed = 2 
-      this.scared = false 
+      this.position = position;
+      this.velocity = velocity;
+      this.size = (canvas.width / 14) * 0.75; // Player size
+      this.radius = (canvas.width / 14) * 0.35; // Player radius      
+      this.color = color;
+      this.prevCollisions = []; 
+      this.speed = 2; 
+      this.scared = false; 
 
-      this.hits = 0;
+      this.health = 3;
 
       this.image = new Image();
       this.image.src = 'WhiteBlood.png';
+    }
+
+    takeDamage() {
+        this.health -= 1;
+        if (this.health <= 0) {
+            return true;
+        }
+        return false;
     }
 
     draw() {
@@ -161,15 +168,62 @@ class BloodCell {
             };
         }
     
-        ctx.restore();
+        ctx.restore(); // Restore the canvas state to remove the clipping
     }
 
-update() {
-    this.draw()
-    this.position.x += this.velocity.x
-    this.position.y += this.velocity.y
+    update() {
+        this.draw();
+
+        // Calculate the next position
+        const nextPosition = {
+            x: this.position.x + this.velocity.x,
+            y: this.position.y + this.velocity.y,
+        };
+
+        // Check for collisions at the next position
+        const collidesWithBoundary = boundaries.some(boundary => 
+            circleCollidesWithRectangle({
+                circle: { ...this, position: nextPosition }, // Check collision with next position
+                rectangle: boundary
+            })
+        );
+
+        // If collision detected, don't move
+        if (!collidesWithBoundary) {
+            this.position.x += this.velocity.x;
+            this.position.y += this.velocity.y;
+        }
+
+        // Adjust direction randomly if needed
+        if (collidesWithBoundary) {
+            this.velocity.x = 0;
+            this.velocity.y = 0;
+
+            // Random direction after collision
+            const directions = ['down', 'up', 'right', 'left'];
+            const availableDirections = directions.filter(direction => !this.prevCollisions.includes(direction));
+
+            if (availableDirections.length > 0) {
+                const direction = availableDirections[Math.floor(Math.random() * availableDirections.length)];
+                switch (direction) {
+                    case 'down':
+                        this.velocity = { x: 0, y: this.speed };
+                        break;
+                    case 'up':
+                        this.velocity = { x: 0, y: -this.speed };
+                        break;
+                    case 'right':
+                        this.velocity = { x: this.speed, y: 0 };
+                        break;
+                    case 'left':
+                        this.velocity = { x: -this.speed, y: 0 };
+                        break;
+                }
+            }
+        }
     }
 }
+
 
 // Resizing til canvas baseret på browser vinduets størrelse
 function resizeCanvas() {
@@ -277,116 +331,49 @@ function animate() {
 
     BWCs.forEach((BWC) => {
         BWC.update();
-        const collisions = [] 
 
-        boundaries.forEach(boundary => {
-                if ( 
-                !collisions.includes('right') &&
-                circleCollidesWithRectangle({
-                circle: {...BWC, 
-                    velocity: {
-                    x: BWC.speed, 
-                    y: 0 
-                }},
-                rectangle: boundary
-            })
-            ) {
-                collisions.push('right') 
-            }
-
-            if ( 
-                !collisions.includes('left') &&
-                circleCollidesWithRectangle({
-                circle: {...BWC, 
-                    velocity: {
-                    x: -BWC.speed , 
-                    y: 0 
-                }},
-                rectangle: boundary
-            })
-            ) {
-                collisions.push('left') 
-            }
-
-            if ( 
-                !collisions.includes('up') &&
-                circleCollidesWithRectangle({
-                circle: {...BWC, 
-                    velocity: {
-                    x: 0, 
-                    y: -BWC.speed 
-                }},
-                rectangle: boundary
-            })
-            ) {
-                collisions.push('up') 
-            }
-
-            if ( 
-                !collisions.includes('down') && 
-                circleCollidesWithRectangle({
-                circle: {...BWC, 
-                    velocity: {
-                    x: 0, 
-                    y: BWC.speed 
-                }},
-                rectangle: boundary
-            })
-            ) {
-                collisions.push('down') 
-            }
-        })
-        if (collisions.length > BWC.prevCollisions.length)
-            BWC.prevCollisions = collisions
-        
-        if (JSON.stringify(collisions) !== JSON.stringify(BWC.prevCollisions)) { 
-            console.log(collisions) 
-            console.log(BWC.prevCollisions)
-            if (BWC.velocity.x > 0) BWC.prevCollisions.
-             push('right') 
-            else if (BWC.velocity.x < 0) BWC.prevCollisions.
-             push('left') 
-            else if (BWC.velocity.y < 0) BWC.prevCollisions.
-             push('up') 
-            else if (BWC.velocity.y > 0) BWC.prevCollisions.
-             push('down')
-
-            const pathways = BWC.prevCollisions.filter(collision => {
-                return !collisions.includes(collision) 
-            })
-            console.log({ pathways })
-
-            const direction = pathways[Math.floor(Math.random() * pathways.length)] 
-            
-            console.log({ direction })
-
-            switch (direction) {
-                case 'down':
-                    BWC.velocity.y = BWC.speed  
-                    BWC.velocity.x = 0
-                    break 
-                case 'up':
-                    BWC.velocity.y = -BWC.speed  
-                    BWC.velocity.x = 0
-                    break 
-                case 'right':
-                    BWC.velocity.y = 0 
-                    BWC.velocity.x = BWC.speed 
-                    break 
-                case 'left':
-                    BWC.velocity.y = 0 
-                    BWC.velocity.x = -BWC.speed 
-                    break 
-            }
-
-            BWC.prevCollisions = [] 
-        }
         if (BWC.position.x < 0) {
             BWC.position.x = canvas.width;
         } 
         if (BWC.position.x > canvas.width) {
             BWC.position.x = 0;
         }
+    });
+
+    projectiles.forEach((projectile, index) => {
+        projectile.update();
+        if (
+            projectile.position.x + projectile.radius < 0 ||
+            projectile.position.x - projectile.radius > canvas.width ||
+            projectile.position.y + projectile.radius < 0 ||
+            projectile.position.y - projectile.radius > canvas.height
+        ) {
+            projectiles.splice(index, 1);
+        }
+        boundaries.forEach((boundary) => {
+            if (
+                circleCollidesWithRectangle({
+                    circle: projectile,
+                    rectangle: boundary,
+                })
+            ) {
+                projectiles.splice(index, 1);
+            }
+        });
+
+        BWCs.forEach((BWC, BWCIndex) => {
+            const dx = projectile.position.x - BWC.position.x;
+            const dy = projectile.position.y - BWC.position.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < projectile.radius + BWC.radius) {
+                projectiles.splice(index, 1); // Remove projectile
+                if (BWC.takeDamage()) {
+                    BWCs.splice(BWCIndex, 1); // Remove BWC if health <= 0
+                }
+            }
+        });
+        
     });
 
     player.update();
@@ -475,19 +462,6 @@ function animate() {
     if (player.position.x > canvas.width) {
         player.position.x = 0;
     }
-
-    projectiles.forEach((projectile, index) => {
-        projectile.update();
-        
-        if (
-            projectile.position.x < 0 ||
-            projectile.position.x > canvas.width ||
-            projectile.position.y < 0 ||
-            projectile.position.y > canvas.height
-        ) {
-            projectiles.splice(index, 1);
-        }
-    });
 }
 animate();
 
@@ -495,13 +469,13 @@ function shootProjectile(direction) {
     const velocity = { x: 0, y: 0 };
 
     if (direction === 'up') {
-        velocity.y = -5;
+        velocity.y = -10;
     } else if (direction === 'down') {
-        velocity.y = 5;
+        velocity.y = 10;
     } else if (direction === 'left') {
-        velocity.x = -5;
+        velocity.x = -10;
     } else if (direction === 'right') {
-        velocity.x = 5;
+        velocity.x = 10;
     }
 
     projectiles.push(new Projectile({
