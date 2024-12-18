@@ -403,7 +403,9 @@ function animate() {
             if (circleCollidesWithCircle(projectile, BWC)) {
                 projectiles.splice(index, 1); // Remove projectile
                 if (BWC.takeDamage()) {
-                    BWCs.splice(BWCIndex, 1); // Remove BWC if health <= 0
+                    const deadBWC = BWCs.splice(BWCIndex, 1); // Remove BWC if health <= 0
+                    respawnBWC(deadBWC[0].position);
+                    respawnBWC(deadBWC[0].position);
                 }
             }
         });
@@ -498,6 +500,25 @@ function animate() {
     }
 }
 animate();
+
+// Async function som kører efter 5 sekunder (5000 millisekunder) og spawner nye BWC i givne position
+async function respawnBWC(position) {
+    setTimeout(() => {
+        BWCs.push(
+            new BloodCell({
+                position: {
+                    x: position.x,
+                    y: position.y
+                }, 
+                velocity: {
+                    x: BloodCell.speed,
+                    y: 0 
+                },
+                color: 'white'
+            })
+        );
+    }, 5000);
+}
 
 function shootProjectile(direction) {
     const velocity = { x: 0, y: 0 };
