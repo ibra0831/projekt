@@ -11,6 +11,8 @@ const keys = {
 };
 let lastKey = '';
 
+let gameRunning = true;
+
 const projectiles = [];
 
 // Map generation
@@ -34,12 +36,21 @@ class Boundary {
 class Player {
     constructor({ position, velocity }) {
         this.position = position;
+        this.health = 3;
         this.velocity = velocity;
         this.size = (canvas.width / 14) * 0.75;
         this.radius = (canvas.width / 14) * 0.35;
 
         this.image = new Image();
         this.image.src = 'Bacteria.png';
+    }
+
+    takeDamage() {
+        this.health -= 1;
+        if (this.health <= 0) {
+            return true;
+        }
+        return false;
     }
 
     resize() {
@@ -79,9 +90,9 @@ class Player {
     }
 
     update() {
-        this.draw();
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
+        this.draw();
     }
 }
 const boundaries = [];
@@ -310,8 +321,21 @@ function circleCollidesWithRectangle({ circle, rectangle }) {
     )
 } 
 
+function circleCollidesWithCircle(circle1, circle2) {
+    const dx = circle1.position.x - circle2.position.x;
+    const dy = circle1.position.y - circle2.position.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < circle1.radius + circle2.radius) {
+        return true;
+    }
+    return false;
+}
+
 // Her foregår alt spil-mekanikken
 function animate() {
+    if (!gameRunning) return;
+
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -331,6 +355,20 @@ function animate() {
 
     BWCs.forEach((BWC) => {
         BWC.update();
+
+        //tjek om spilleren kolliderer med BWC
+        if (circleCollidesWithCircle(player, BWC)){
+            player.position = {
+                x: (canvas.width / 18) + ((canvas.width / 18) / 2),
+                y: (canvas.height / 14) + ((canvas.height / 14) / 2),
+            };
+            player.velocity.x = 0;
+            player.velocity.y = 0;
+            let isDead = player.takeDamage();
+            if(isDead){
+                window.location.href = "dead.html"
+            }
+        }
 
         if (BWC.position.x < 0) {
             BWC.position.x = canvas.width;
@@ -362,11 +400,7 @@ function animate() {
         });
 
         BWCs.forEach((BWC, BWCIndex) => {
-            const dx = projectile.position.x - BWC.position.x;
-            const dy = projectile.position.y - BWC.position.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < projectile.radius + BWC.radius) {
+            if (circleCollidesWithCircle(projectile, BWC)) {
                 projectiles.splice(index, 1); // Remove projectile
                 if (BWC.takeDamage()) {
                     BWCs.splice(BWCIndex, 1); // Remove BWC if health <= 0
