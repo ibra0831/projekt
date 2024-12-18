@@ -1,6 +1,6 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-const aspectRatio = 18 / 14; // Størrelsen og billedformat af banen
+const aspectRatio = 18 / 14;
 
 // Variabler til input-tjek
 const keys = {
@@ -11,7 +11,7 @@ const keys = {
 };
 let lastKey = '';
 
-const projectiles = []; // Store the fired projectiles
+const projectiles = [];
 
 // Map generation
 const selectedStarterMap = starterMaps[Math.floor(Math.random() * starterMaps.length)];
@@ -93,9 +93,6 @@ class Projectile {
         this.velocity = velocity;
         this.size = (canvas.width / 14) * 0.1;
         this.radius = (canvas.width / 14) * 0.1;
-
-        /* this.image = new Image();
-        this.image.src = 'Bacteria.png'; */
     }
 
     resize() {
@@ -123,8 +120,8 @@ class BloodCell {
     constructor({ position, velocity, color = 'white' }) {
       this.position = position
       this.velocity = velocity
-      this.size = (canvas.width / 14) * 0.75; // Player size
-      this.radius = (canvas.width / 14) * 0.35; // Player radius      
+      this.size = (canvas.width / 14) * 0.75;
+      this.radius = (canvas.width / 14) * 0.35;   
       this.color = color
       this.prevCollisions = [] 
       this.speed = 2 
@@ -164,7 +161,7 @@ class BloodCell {
             };
         }
     
-        ctx.restore(); // Restore the canvas state to remove the clipping
+        ctx.restore();
     }
 
 update() {
