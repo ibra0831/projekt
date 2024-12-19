@@ -11,7 +11,7 @@
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
             height: 100vh;
-            background-color: #EC5766; 
+            background-color: black; 
             color: #39ff14; 
             display: flex;
             justify-content: space-between;
@@ -19,6 +19,10 @@
             padding: 5%;
             box-sizing: border-box;
             position: relative;
+            display: flex;
+            flex-direction: row; /* Sørg for at placere dem på samme række */
+            justify-content: space-evenly; /* Lige meget afstand mellem sektionerne */
+            align-items: center;
         }
         .story-container {
             width: 40%;
@@ -98,7 +102,7 @@
 
     <div class="controls-container">
         <div class="instructions">
-            Brug <strong>W</strong>, <strong>A</strong>, <strong>S</strong>, og <strong>D</strong> til at styre din karakter:
+            <strong>W</strong>, <strong>A</strong>, <strong>S</strong>, og <strong>D</strong> til at styre din spiller:
         </div>
         <div class="keys">
             <div class="key"></div>
@@ -110,6 +114,20 @@
         </div>
     </div>
 
+    <div class="controls-container">
+        <div class="instructions">
+            <strong>Pileknapperne</strong> til at skyde:
+        </div>
+        <div class="keys">
+            <div class="key"></div>
+            <div class="key">↑</div>
+            <div class="key"></div>
+            <div class="key">←</div>
+            <div class="key">↓</div>
+            <div class="key">→</div>
+        </div>
+    </div>
+
 
     <a href="index.html" class="arrow-button">
         &#10140; 
@@ -117,13 +135,11 @@
 
     <script>
         let storyText = `
-Bakterien Bob er den sidste af sin slags - en lille, lysende grøn bakterie med en uventet evne. Efter en mystisk kemisk eksplosion i kroppen har Bob fået kraften til at overleve og tilpasse sig på de mest umulige måder.
+Bob er ikke som andre bakterier. Mens de fleste af hans mikroskopiske fætre og kusiner bare lever deres liv i en våd og lun kropsdel, er Bob en eventyrer. Han blev født dybt inde i tarmen, hvor livet var trygt, men også... kedeligt. En dag besluttede han sig for at rejse ud i kroppen og finde nye steder at kalde hjem. Men Bob vidste ikke, at der ventede en farlig fjende på hans rejse: de hvide blodceller.
 
-Men kroppens forsvar har set sig vred på ham. Ledet af den frygtindgydende General Immuno har de hvide blodlegemer sat en ubarmhjertig jagt ind. Bob er fanget i kroppens blodårer - et konstant flow af farer, hvor de hvide blodlegemer angriber fra alle sider.
+De hvide blodceller er kroppens forsvar, trænet til at jage og eliminere bakterier som Bob. Hver gang Bob bekæmper én af dem, kalder kroppen på forstærkninger, og to nye dukker op. Det gør Bobs overlevelse til en konstant kamp.
 
-For at overleve må Bob undvige, navigere og overleve i de snævre blodkar, mens truslen konstant vokser. Hans mission? Blive ved med at flygte, kæmpe mod strømmen og finde et sted, hvor han endelig kan være i fred.
-
-Undvig. Overlev. Bliv fri.`;
+Bob er dog en snedig lille fyr. Han har udviklet evner til at glide gennem smalle blodkar, hoppe over immunceller og endda sprøjte enzymer, der midlertidigt lammer hans fjender. Men der er en grænse for, hvor meget han kan klare – han har kun tre liv, og hvis han mister dem, er hans eventyr forbi.`;
 
         let storyElement = document.getElementById("story");
         let i = 0;
