@@ -119,8 +119,8 @@ class BloodCell {
     constructor({ position, velocity, color = 'white' }) {
       this.position = position;
       this.velocity = velocity;
-      this.size = (canvas.width / 14) * 0.75; // Player size
-      this.radius = (canvas.width / 14) * 0.35; // Player radius      
+      this.size = (canvas.width / 14) * 0.75; 
+      this.radius = (canvas.width / 14) * 0.35;    
       this.color = color;
       this.prevCollisions = []; 
       this.speed = 2; 
@@ -168,38 +168,33 @@ class BloodCell {
             };
         }
     
-        ctx.restore(); // Restore the canvas state to remove the clipping
+        ctx.restore(); 
     }
 
     update() {
         this.draw();
 
-        // Calculate the next position
         const nextPosition = {
             x: this.position.x + this.velocity.x,
             y: this.position.y + this.velocity.y,
         };
 
-        // Check for collisions at the next position
         const collidesWithBoundary = boundaries.some(boundary => 
             circleCollidesWithRectangle({
-                circle: { ...this, position: nextPosition }, // Check collision with next position
+                circle: { ...this, position: nextPosition }, 
                 rectangle: boundary
             })
         );
 
-        // If collision detected, don't move
         if (!collidesWithBoundary) {
             this.position.x += this.velocity.x;
             this.position.y += this.velocity.y;
         }
 
-        // Adjust direction randomly if needed
         if (collidesWithBoundary) {
             this.velocity.x = 0;
             this.velocity.y = 0;
 
-            // Random direction after collision
             const directions = ['down', 'up', 'right', 'left'];
             const availableDirections = directions.filter(direction => !this.prevCollisions.includes(direction));
 
@@ -367,9 +362,9 @@ function animate() {
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < projectile.radius + BWC.radius) {
-                projectiles.splice(index, 1); // Remove projectile
+                projectiles.splice(index, 1);
                 if (BWC.takeDamage()) {
-                    BWCs.splice(BWCIndex, 1); // Remove BWC if health <= 0
+                    BWCs.splice(BWCIndex, 1);
                 }
             }
         });
