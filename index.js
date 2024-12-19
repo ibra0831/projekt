@@ -500,7 +500,12 @@ function animate() {
     if (player.position.x > canvas.width) {
         player.position.x = 0;
     }
-    ctx.font = "24px serif";
+    ctx.font = "24px 'Courier New', Courier, monospace";
+
+    ctx.fillStyle = "#39ff14"; 
+    ctx.textAlign = "center"; 
+    ctx.textBaseline = "middle"; 
+
     ctx.fillText("Lives: " + player.health, 0 +(canvas.width * 0.1), 0 + (canvas.height * 0.05));
     ctx.fillText("Score: " + score, 0 + (canvas.width * 0.7), 0 + (canvas.height * 0.05));
 
