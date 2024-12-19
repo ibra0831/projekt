@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <script>
+      window.onload = function() {
+      var value = localStorage.getItem('SCORE');
+
+      var output = document.getElementById('score-text');
+      output.innerText = "Your score: " + value;
+      };
+    </script>
 </head>
 <body>
-    <head>DEAD</head>
-
     <style>
      body {
       margin: 0;
@@ -27,7 +34,7 @@
     .neon-text {
       font-size: 4rem;
       font-weight: bold;
-      color: #ff0055; /* Neon farve */
+      color: white; /* Neon farve */
       text-shadow: 0 0 5px #ff0055, 0 0 10px #ff3377, 0 0 20px #ff6699, 0 0 40px #ff99cc;
     }
 
@@ -54,6 +61,7 @@
 <body>
   <div class="game-over-container">
     <div class="neon-text">Du er død</div>
+    <div style = "font-size: 1.5rem" class="neon-text" id="score-text"></div>
     <button class="restart-button" id="restart-button">Start forfra</button>
   </div>
 

@@ -11,6 +11,8 @@ const keys = {
 };
 let lastKey = '';
 
+let score = 0;
+
 let gameRunning = true;
 
 const projectiles = [];
@@ -146,6 +148,7 @@ class BloodCell {
     takeDamage() {
         this.health -= 1;
         if (this.health <= 0) {
+            score += 10;
             return true;
         }
         return false;
@@ -402,7 +405,7 @@ function animate() {
             if (circleCollidesWithCircle(projectile, BWC)) {
                 projectiles.splice(index, 1);
                 if (BWC.takeDamage()) {
-                    const deadBWC = BWCs.splice(BWCIndex, 1); // Remove BWC if health <= 0
+                    const deadBWC = BWCs.splice(BWCIndex, 1);
                     respawnBWC(deadBWC[0].position);
                     respawnBWC(deadBWC[0].position);
                 }
@@ -497,6 +500,11 @@ function animate() {
     if (player.position.x > canvas.width) {
         player.position.x = 0;
     }
+    ctx.font = "24px serif";
+    ctx.fillText("Lives: " + player.health, 0 +(canvas.width * 0.1), 0 + (canvas.height * 0.05));
+    ctx.fillText("Score: " + score, 0 + (canvas.width * 0.7), 0 + (canvas.height * 0.05));
+
+    localStorage.setItem('SCORE', score);
 }
 animate();
 
